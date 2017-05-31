@@ -12,8 +12,8 @@ import Alamofire
 class Forecast {
     var _date:String!
     var _weatherType: String!
-    var _highTemperature: Double!
-    var _lowTemperature: Double!
+    var _highTemperature: Int!
+    var _lowTemperature: Int!
     
     var date: String {
         if _date == nil {
@@ -29,16 +29,16 @@ class Forecast {
         return _weatherType
     }
     
-    var highTemperature: Double {
+    var highTemperature: Int {
         if _highTemperature == nil {
-            _highTemperature = 0.0
+            _highTemperature = 0
         }
         return _highTemperature
     }
     
-    var lowTemperature: Double {
+    var lowTemperature: Int {
         if _lowTemperature == nil {
-            _lowTemperature = 0.0
+            _lowTemperature = 0
         }
         return _lowTemperature
     }
@@ -49,16 +49,15 @@ class Forecast {
             
             if let min = temp["min"] as? Double {
                 let kelvinToCelsiumPreDivision = min - 273.15
-                let kelvinToCelsium = Double(round(10 * kelvinToCelsiumPreDivision/10))
+                let kelvinToCelsium = Int(round(10 * kelvinToCelsiumPreDivision/10))
                 self._lowTemperature = kelvinToCelsium
             }
             
             if let max = temp["max"] as? Double {
                 let kelvinToCelsiumPreDivision = max - 273.15
-                let kelvinToCelsium = Double(round(10 * kelvinToCelsiumPreDivision/10))
+                let kelvinToCelsium = Int(round(10 * kelvinToCelsiumPreDivision/10))
                 self._highTemperature = kelvinToCelsium
             }
-            
         }
         
         if let weather = weatherDict["weather"] as? [Dictionary<String, Any>] {

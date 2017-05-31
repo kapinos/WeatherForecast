@@ -31,6 +31,8 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.alpha = 0
+        
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -40,13 +42,17 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         locationManager.startMonitoringSignificantLocationChanges()
         
         currentWeather = CurrentWeather()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         locationAuthStatus()
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     
     //MARK: delegate & datasource
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -67,10 +73,6 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         }
     }
     
-   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor(white: 1, alpha: 0.3)
-    }
-    
     //MARK: inner methods
     func updateMainUI() {
         currentDateLabel.text = currentWeather.date
@@ -78,6 +80,9 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         currentLocationLabel.text = currentWeather.cityName
         currentTypeWeatherLabel.text = currentWeather.weatherType
         currentImage.image = UIImage(named: currentWeather.weatherType)
+        
+        self.tableView.alpha = 1
+        animateTable()
     }
     
     func downloadForecastData(completed: @escaping DownloadComplete)  {
@@ -118,6 +123,30 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         } else {
             locationManager.requestWhenInUseAuthorization()
             locationAuthStatus()
+        }
+    }
+    
+    func animateTable() {
+        tableView.clipsToBounds = false
+        
+        let cells = tableView.visibleCells
+        let tableHeight: CGFloat = tableView.bounds.size.height
+        
+        for i in cells {
+            let cell: UITableViewCell = i as UITableViewCell
+            cell.transform = CGAffineTransform(translationX: 0, y: tableHeight)
+        }
+        
+        var index = 0
+        
+        for a in cells {
+            let cell: UITableViewCell = a as UITableViewCell
+            UIView.animate(withDuration: 2.5, delay: 0.5 * Double(index), usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                cell.transform = CGAffineTransform(translationX: 0, y: 0);
+            }, completion:{ finished in
+                self.tableView.clipsToBounds = true
+            })
+            index += 1
         }
     }
 }

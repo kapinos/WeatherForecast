@@ -22,6 +22,7 @@ class WeatherCell: UITableViewCell {
         typeWeatherLabel.text = "\(forecast.weatherType)"
         weatherIcon.image = UIImage(named: forecast.weatherType)
         dayOfWeekLabel.text = forecast.date
+        
+        self.backgroundColor = UIColor(white: 1, alpha: 0.3)
     }
-
 }
