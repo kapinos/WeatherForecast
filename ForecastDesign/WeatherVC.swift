@@ -25,8 +25,9 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     var currentLocation: CLLocation!
     
     var currentWeather: CurrentWeather!
-    var forecast: Forecast!
-    var forecasts = [Forecast]()
+   // var forecast: Forecast!
+    var forecasts = ForecastDaysInfo()
+    var forecastHours = ForecastHoursInfo()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,17 +43,22 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         locationManager.startMonitoringSignificantLocationChanges()
         
         currentWeather = CurrentWeather()
+
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.view.backgroundColor = .clear
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        locationAuthStatus()
+        
+        if forecasts.isEmpty() {
+            locationAuthStatus()    // get the user's location
+        } else {
+            animateTable()
+        }
     }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     
     //MARK: delegate & datasource
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -60,19 +66,35 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return forecasts.count
+        return forecasts.count()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath) as? WeatherCell {
-            let forecast = forecasts[indexPath.row]
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherByDayCell", for: indexPath) as? WeatherByDayCell {
+            let forecast = forecasts.getForecast(byIndex: indexPath.row)
             cell.cofigureCell(forecast: forecast)
             return cell
         } else {
-            return WeatherCell()
+            return WeatherByDayCell()
         }
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //forecastHours.downloadForecastData {}     // test dowload data per hours
+        
+        let day = forecasts.getForecast(byIndex: indexPath.row)
+        performSegue(withIdentifier: "SegueToDayDetails", sender: day)
+    }
     
+    //MARK: segue
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? DayDetailsVC {
+            if let forecast = sender as? ForecastPerDay {
+                destination.forecastSelectedDay = forecast
+            }
+        }
+    }
+
     //MARK: inner methods
     func updateMainUI() {
         currentDateLabel.text = currentWeather.date
@@ -85,37 +107,16 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         animateTable()
     }
     
-    func downloadForecastData(completed: @escaping DownloadComplete)  {
-        let forecastURL = URL(string: FORECAST_TEN_DAYS_URL)
-        Alamofire.request(forecastURL!).responseJSON { response in
-            
-            let result = response.result
-            
-            if let dict = result.value as? Dictionary<String, Any> {
-                if let list = dict["list"] as? [Dictionary<String, Any>] {
-                    for object in list {
-                       // print(object) // get 10 days forecast
-                        let forecast = Forecast(weatherDict: object)
-                        self.forecasts.append(forecast)
-                    }
-                    self.forecasts.remove(at: 0) // remove the weather for today
-                    self.tableView.reloadData()
-                }
-            }
-            completed()
-        }
-    }
-    
     func locationAuthStatus() {
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             if locationManager.location != nil {
                 currentLocation = locationManager.location
                 
-                Location.sharedInstance.latitude = currentLocation.coordinate.latitude
-                Location.sharedInstance.longitude = currentLocation.coordinate.longitude
+                LocationService.sharedInstance.latitude = currentLocation.coordinate.latitude
+                LocationService.sharedInstance.longitude = currentLocation.coordinate.longitude
                 
                 currentWeather.downloadWeatherDetails {
-                    self.downloadForecastData {
+                    self.forecasts.downloadForecastData {
                         self.updateMainUI()
                     }
                 }
@@ -127,6 +128,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func animateTable() {
+        tableView.reloadData() // ??
         tableView.clipsToBounds = false
         
         let cells = tableView.visibleCells

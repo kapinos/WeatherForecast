@@ -1,6 +1,6 @@
 //
 //  Forecast.swift
-//  Forecast
+//  Forecast for 10 days
 //
 //  Created by Anastasia on 5/29/17.
 //  Copyright © 2017 Anastasia. All rights reserved.
@@ -9,17 +9,33 @@
 import UIKit
 import Alamofire
 
-class Forecast {
-    var _date:String!
-    var _weatherType: String!
-    var _highTemperature: Int!
-    var _lowTemperature: Int!
+class ForecastPerDay {
+    private var _dayOfWeek:String!
+    private var _dayOfMonth:String!
+    private var _month: String!
+    private var _weatherType: String!
+    private var _highTemperature: Int!
+    private var _lowTemperature: Int!
     
-    var date: String {
-        if _date == nil {
-            _date = ""
+    var dayOfWeek: String {
+        if _dayOfWeek == nil {
+            _dayOfWeek = ""
         }
-        return _date
+        return _dayOfWeek
+    }
+    
+    var dayOfMonth: String {
+        if _dayOfMonth == nil {
+            _dayOfMonth = ""
+        }
+        return _dayOfMonth
+    }
+    
+    var month: String {
+        if _month == nil {
+            _month = ""
+        }
+        return _month
     }
     
     var weatherType: String {
@@ -70,11 +86,9 @@ class Forecast {
         if let date = weatherDict["dt"] as? Double {
             
             let unixConvertedDate = Date(timeIntervalSince1970: date)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .full
-            dateFormatter.dateFormat = "EEEE"
-            dateFormatter.timeStyle = .none
-            self._date = unixConvertedDate.dayOfTheWeek()
+            self._dayOfWeek = unixConvertedDate.dayOfTheWeek()
+            self._dayOfMonth = unixConvertedDate.dayOfTheMonth()
+            self._month = unixConvertedDate.month()
         }
     }
 }
@@ -83,6 +97,18 @@ extension Date {
     func dayOfTheWeek() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: self)
+    }
+    
+    func dayOfTheMonth() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d"
+        return dateFormatter.string(from: self)
+    }
+    
+    func month() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM"
         return dateFormatter.string(from: self)
     }
 }

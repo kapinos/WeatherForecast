@@ -1,5 +1,5 @@
 //
-//  WeatherCell.swift
+//  WeatherByDayCell.swift
 //  ForecastDesign
 //
 //  Created by Anastasia on 5/30/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherCell: UITableViewCell {
+class WeatherByDayCell: UITableViewCell {
 
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var dayOfWeekLabel: UILabel!
@@ -16,13 +16,14 @@ class WeatherCell: UITableViewCell {
     @IBOutlet weak var highTemperatureLabel: UILabel!
     @IBOutlet weak var lowTemperatureLabel: UILabel!
     
-    func cofigureCell(forecast: Forecast) {
+    func cofigureCell(forecast: ForecastPerDay) {
         lowTemperatureLabel.text = "\(forecast.lowTemperature) °C"
         highTemperatureLabel.text = "\(forecast.highTemperature) °C"
         typeWeatherLabel.text = "\(forecast.weatherType)"
         weatherIcon.image = UIImage(named: forecast.weatherType)
-        dayOfWeekLabel.text = forecast.date
+        dayOfWeekLabel.text = forecast.dayOfWeek
         
         self.backgroundColor = UIColor(white: 1, alpha: 0.3)
+        //self.layer.cornerRadius = 15
     }
 }
