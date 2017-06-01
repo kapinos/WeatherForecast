@@ -28,6 +28,10 @@ class ForecastHoursInfo {
         return _forecasts[byIndex]
     }
     
+    func isEmpty() -> Bool {
+        return (_forecasts.count == 0)
+    }
+    
     func downloadForecastData(completed: @escaping DownloadComplete)  {
         let forecastURL = URL(string: FORECAST_EVERY_THREE_HOURS)
         Alamofire.request(forecastURL!).responseJSON { response in
@@ -37,7 +41,7 @@ class ForecastHoursInfo {
             if let dict = result.value as? Dictionary<String, Any> {
                 if let list = dict["list"] as? [Dictionary<String, Any>] {
                     for object in list {
-                        print(object) // get 10 days forecast
+                    //    print(object) // get 5 days every 3 hour forecast
                         let forecast = ForecastPerHour(weatherDict: object)
                         self._forecasts.append(forecast)
                     }

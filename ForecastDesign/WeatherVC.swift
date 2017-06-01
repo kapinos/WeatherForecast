@@ -23,11 +23,9 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     //MARK: variables
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation!
-    
     var currentWeather: CurrentWeather!
-   // var forecast: Forecast!
     var forecasts = ForecastDaysInfo()
-    var forecastHours = ForecastHoursInfo()
+    //var forecastHours = ForecastHoursInfo()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -128,7 +126,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func animateTable() {
-        tableView.reloadData() // ??
+        tableView.reloadData() 
         tableView.clipsToBounds = false
         
         let cells = tableView.visibleCells

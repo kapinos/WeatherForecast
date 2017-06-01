@@ -96,19 +96,25 @@ class ForecastPerDay {
 extension Date {
     func dayOfTheWeek() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
+        dateFormatter.dateFormat = "EEEE"       // Wednesday
         return dateFormatter.string(from: self)
     }
     
     func dayOfTheMonth() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "d"
+        dateFormatter.dateFormat = "d"          // 7
         return dateFormatter.string(from: self)
     }
     
     func month() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM"
+        dateFormatter.dateFormat = "MMMM"       // June
+        return dateFormatter.string(from: self)
+    }
+    
+    func time() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"      // 15:00
         return dateFormatter.string(from: self)
     }
 }

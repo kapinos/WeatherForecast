@@ -15,18 +15,19 @@ class WeatherByHourCell: UITableViewCell {
     @IBOutlet weak var weatherTypeLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var rainPercentageLabel: UILabel!
-    @IBOutlet weak var windDegreeImage: UIImageView!    // haven't
+    @IBOutlet weak var windDegreeImage: UIImageView! 
     @IBOutlet weak var windSpeedLabel: UILabel!
     
     
-    func cofigureCell(forecast: ForecastPerDay) {
-//        lowTemperatureLabel.text = "\(forecast.lowTemperature) °C"
-//        highTemperatureLabel.text = "\(forecast.highTemperature) °C"
-//        typeWeatherLabel.text = "\(forecast.weatherType)"
-//        weatherIcon.image = UIImage(named: forecast.weatherType)
-//        dayOfWeekLabel.text = forecast.date
-//        
-//        self.backgroundColor = UIColor(white: 1, alpha: 0.3)
+    func configureCell(forecast: ForecastPerHour) {
+        timeLabel.text = "\(forecast.time)"
+        weatherTypeImage.image = UIImage(named: forecast.weatherType)
+        weatherTypeLabel.text = "\(forecast.weatherType)"
+        temperatureLabel.text = "\(forecast.temperature) °C"
+        rainPercentageLabel.text = "\(forecast.rain) %"
+        windDegreeImage.image = UIImage(named: forecast.windDirection)
+        windSpeedLabel.text = "\(forecast.windSpeed) h/s"
+        
+        self.backgroundColor = UIColor(white: 1, alpha: 0.3)
     }
-
 }

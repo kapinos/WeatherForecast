@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DayDetailsVC: UIViewController {
+class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     // MARK: IBOutlets
     @IBOutlet weak var dayWeekLabel: UILabel!
@@ -18,6 +18,7 @@ class DayDetailsVC: UIViewController {
     
     // MARK: variables
     private var _forecastSelectedDay: ForecastPerDay!
+    private var _forecastHours = ForecastHoursInfo()
 
     var forecastSelectedDay: ForecastPerDay {
         get {
@@ -32,11 +33,44 @@ class DayDetailsVC: UIViewController {
         super.viewDidLoad()
 
         self.navigationController?.navigationBar.tintColor = UIColor.white
+        self.tableView.alpha = 0
+        
+        tableView.delegate = self
+        tableView.dataSource = self
         
         dayWeekLabel.text = _forecastSelectedDay.dayOfWeek
         dayMonthLabel.text = _forecastSelectedDay.dayOfMonth
         monthLabel.text = _forecastSelectedDay.month
+        
     }
 
-
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if _forecastHours.isEmpty() {
+            _forecastHours.downloadForecastData {
+                self.tableView.alpha = 1
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    // MARK: delegate & datasource
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return _forecastHours.count()
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherByHourCell", for: indexPath) as? WeatherByHourCell {
+            let forecast = _forecastHours.getForecast(byIndex: indexPath.row)
+            cell.configureCell(forecast: forecast)
+            return cell
+        } else {
+            return WeatherByHourCell()
+        }
+    }
 }
