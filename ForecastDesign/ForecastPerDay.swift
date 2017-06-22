@@ -1,6 +1,6 @@
 //
-//  Forecast.swift
-//  Forecast for 10 days
+//  ForecastPerDay.swift
+//  Forecast for one day
 //
 //  Created by Anastasia on 5/29/17.
 //  Copyright © 2017 Anastasia. All rights reserved.
@@ -14,6 +14,8 @@ class ForecastPerDay {
     private var _dayOfMonth:String!
     private var _month: String!
     private var _weatherType: String!
+    private var _weatherDescription: String!
+    private var _weatherIcon: String!
     private var _highTemperature: Int!
     private var _lowTemperature: Int!
     
@@ -45,6 +47,20 @@ class ForecastPerDay {
         return _weatherType
     }
     
+    var weatherDescription: String {
+        if _weatherDescription == nil {
+            _weatherDescription = ""
+        }
+        return _weatherDescription
+    }
+    
+    var weatherIcon: String {
+        if _weatherIcon == nil {
+            _weatherIcon = ""
+        }
+        return _weatherIcon
+    }
+    
     var highTemperature: Int {
         if _highTemperature == nil {
             _highTemperature = 0
@@ -59,10 +75,17 @@ class ForecastPerDay {
         return _lowTemperature
     }
     
+    // get image for BG
+    // contents weatherType + d/n
+    func defineBGImage() -> String {
+        var weatherBackgroundImage = _weatherType.lowercased()
+        weatherBackgroundImage += _weatherIcon.contains("d") ? "d" : "n" // check day or night
+        return weatherBackgroundImage
+    }
+    
     init(weatherDict: Dictionary<String, Any>) {
         
         if let temp = weatherDict["temp"] as? Dictionary<String, Any> {
-            
             if let min = temp["min"] as? Double {
                 let kelvinToCelsiumPreDivision = min - 273.15
                 let kelvinToCelsium = Int(round(10 * kelvinToCelsiumPreDivision/10))
@@ -77,14 +100,20 @@ class ForecastPerDay {
         }
         
         if let weather = weatherDict["weather"] as? [Dictionary<String, Any>] {
-            
             if let main = weather[0]["main"] as? String {
                 self._weatherType = main
             }
+            
+            if let description = weather[0]["description"] as? String {
+                self._weatherDescription = description
+            }
+            
+            if let icon = weather[0]["icon"] as? String {
+                self._weatherIcon = icon
+            }            
         }
         
-        if let date = weatherDict["dt"] as? Double {
-            
+        if let date = weatherDict["dt"] as? Double {            
             let unixConvertedDate = Date(timeIntervalSince1970: date)
             self._dayOfWeek = unixConvertedDate.dayOfTheWeek()
             self._dayOfMonth = unixConvertedDate.dayOfTheMonth()

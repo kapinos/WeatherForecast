@@ -21,8 +21,8 @@ class WeatherByHourCell: UITableViewCell {
     
     func configureCell(forecast: ForecastPerHour) {
         timeLabel.text = "\(forecast.time)"
-        weatherTypeImage.image = UIImage(named: forecast.weatherType)
-        weatherTypeLabel.text = "\(forecast.weatherType)"
+        weatherTypeImage.image = UIImage(named: forecast.weatherIcon)
+        weatherTypeLabel.text = "\(forecast.weatherDescription)"
         temperatureLabel.text = "\(forecast.temperature) °C"
         rainPercentageLabel.text = "\(forecast.rain) %"
         windDegreeImage.image = UIImage(named: forecast.windDirection)

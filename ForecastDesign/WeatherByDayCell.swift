@@ -19,8 +19,8 @@ class WeatherByDayCell: UITableViewCell {
     func cofigureCell(forecast: ForecastPerDay) {
         lowTemperatureLabel.text = "\(forecast.lowTemperature) °C"
         highTemperatureLabel.text = "\(forecast.highTemperature) °C"
-        typeWeatherLabel.text = "\(forecast.weatherType)"
-        weatherIcon.image = UIImage(named: forecast.weatherType)
+//        typeWeatherLabel.text = "\(forecast.weatherDescription)"
+        weatherIcon.image = UIImage(named: forecast.weatherIcon)
         dayOfWeekLabel.text = forecast.dayOfWeek
         
         self.backgroundColor = UIColor(white: 1, alpha: 0.3)

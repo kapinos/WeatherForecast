@@ -15,6 +15,8 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     @IBOutlet weak var dayMonthLabel: UILabel!
     @IBOutlet weak var monthLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var currentBGImage: UIImageView!
+    @IBOutlet var swipeToOverallForecast: UISwipeGestureRecognizer!
     
     // MARK: variables
     private var _forecastSelectedDay: ForecastPerDay!
@@ -38,17 +40,19 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         tableView.delegate = self
         tableView.dataSource = self
         
+        swipeToOverallForecast.addTarget(self, action: #selector(self.returnToOverallForecast))
+        
+        currentBGImage.image = UIImage(named: _forecastSelectedDay.defineBGImage())
         dayWeekLabel.text = _forecastSelectedDay.dayOfWeek
         dayMonthLabel.text = _forecastSelectedDay.dayOfMonth
         monthLabel.text = _forecastSelectedDay.month
-        
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if _forecastHours.isEmpty() {
-            _forecastHours.downloadForecastData {
+            _forecastHours.downloadForecastData(dayMonth: _forecastSelectedDay.dayOfMonth) {
                 self.tableView.alpha = 1
                 self.tableView.reloadData()
             }
@@ -72,5 +76,10 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         } else {
             return WeatherByHourCell()
         }
+    }
+    
+    // MARK: inner methods
+    func returnToOverallForecast() {
+        self.performSegue(withIdentifier: "segueToOverallForecast", sender: nil)
     }
 }

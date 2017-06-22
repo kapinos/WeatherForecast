@@ -16,10 +16,11 @@ class ForecastPerHour {
     private var _month: String!
     private var _time:String!
     private var _weatherType: String!
+    private var _weatherDescription: String!
+    private var _weatherIcon: String!
     private var _temperature: Int!
     private var _rain: Int!
     private var _windSpeed: Double!
-    //private var _windDegree: Double!
     private var _windDirection: String!
     private var _humidity: Int!
     
@@ -58,6 +59,20 @@ class ForecastPerHour {
         return _weatherType
     }
     
+    var weatherDescription: String {
+        if _weatherDescription == nil {
+            _weatherDescription = ""
+        }
+        return _weatherDescription
+    }
+    
+    var weatherIcon: String {
+        if _weatherIcon == nil {
+            _weatherIcon = ""
+        }
+        return _weatherIcon
+    }
+    
     var temperature: Int {
         if _temperature == nil {
             _temperature = 0
@@ -78,13 +93,6 @@ class ForecastPerHour {
         }
         return _windSpeed
     }
-    
-//    var windDegree: Double {
-//        if _windDegree == nil {
-//            _windDegree = 0.0
-//        }
-//        return _windDegree
-//    }
     
     var windDirection: String {
         if _windDirection == nil {
@@ -118,7 +126,16 @@ class ForecastPerHour {
             if let main = weather[0]["main"] as? String {
                 self._weatherType = main
             }
+            
+            if let description = weather[0]["description"] as? String {
+                self._weatherDescription = description
+            }
+            
+            if let icon = weather[0]["icon"] as? String {
+                self._weatherIcon = icon
+            }
         }
+        
         if let rain = weatherDict["rain"] as? Double {
             self._rain = Int(round(100 * rain))
         }

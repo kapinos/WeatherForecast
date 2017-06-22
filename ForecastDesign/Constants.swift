@@ -5,7 +5,7 @@
 //  Created by Anastasia on 5/30/17.
 //  Copyright © 2017 Anastasia. All rights reserved.
 // http://api.openweathermap.org/data/2.5/weather?lat=47.8261&lon=35.1904&appid=9b6febb338be90f2d99c78265226ec8f //current weather
-// https://api.openweathermap.org/data/2.5/forecast/daily?lat=35&lon=139&cnt=10&appid=9b6febb338be90f2d99c78265226ec8f //forecast 10 days
+// http://api.openweathermap.org/data/2.5/forecast/daily?lat=35&lon=139&cnt=10&appid=9b6febb338be90f2d99c78265226ec8f //forecast 10 days
 // http://api.openweathermap.org/data/2.5/forecast?lat=35&lon=139&appid=9b6febb338be90f2d99c78265226ec8f    //per 3 hours for 5 days
 
 import Foundation

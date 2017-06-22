@@ -16,16 +16,18 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     @IBOutlet weak var currentDateLabel: UILabel!
     @IBOutlet weak var currentTemperatureLabel: UILabel!
     @IBOutlet weak var currentLocationLabel: UILabel!
-    @IBOutlet weak var currentImage: UIImageView!
+    @IBOutlet weak var currentIcon: UIImageView!
+    @IBOutlet weak var currentBGImage: UIImageView!
     @IBOutlet weak var currentTypeWeatherLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet var swipeToCurrentDayDetails: UISwipeGestureRecognizer!
     
     //MARK: variables
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation!
     var currentWeather: CurrentWeather!
+    var currentDay: ForecastPerDay!
     var forecasts = ForecastDaysInfo()
-    //var forecastHours = ForecastHoursInfo()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,12 +42,14 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         locationManager.requestWhenInUseAuthorization()
         locationManager.startMonitoringSignificantLocationChanges()
         
+        swipeToCurrentDayDetails.addTarget(self, action: #selector(self.currentDayDetails))
+        
         currentWeather = CurrentWeather()
-
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = .clear
+        
+//        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        self.navigationController?.navigationBar.shadowImage = UIImage()
+//        self.navigationController?.navigationBar.isTranslucent = true
+//        self.navigationController?.view.backgroundColor = .clear
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -78,8 +82,6 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //forecastHours.downloadForecastData {}     // test dowload data per hours
-        
         let day = forecasts.getForecast(byIndex: indexPath.row)
         performSegue(withIdentifier: "SegueToDayDetails", sender: day)
     }
@@ -87,10 +89,15 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     //MARK: segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? DayDetailsVC {
-            if let forecast = sender as? ForecastPerDay {
-                destination.forecastSelectedDay = forecast
+            if let selectedDay = sender as? ForecastPerDay {
+                destination.forecastSelectedDay = selectedDay
             }
         }
+    }
+    
+    func currentDayDetails() {
+        //print("Segue Left")
+        performSegue(withIdentifier: "SegueToDayDetails", sender: currentDay)
     }
 
     //MARK: inner methods
@@ -99,8 +106,11 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         currentTemperatureLabel.text = "\(currentWeather.currentTemperature) ºC"
         currentLocationLabel.text = currentWeather.cityName
         currentTypeWeatherLabel.text = currentWeather.weatherType
-        currentImage.image = UIImage(named: currentWeather.weatherType)
+        currentIcon.image = UIImage(named: currentWeather.weatherIcon)
+        currentBGImage.image = UIImage(named: currentWeather.defineBGImage())
         
+       // currentBGImage.image = UIImage(named: "thunderstormd") // check image
+       // print("image: \(currentWeather.defineBGImage())") // checkValue image
         self.tableView.alpha = 1
         animateTable()
     }
@@ -115,6 +125,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
                 
                 currentWeather.downloadWeatherDetails {
                     self.forecasts.downloadForecastData {
+                        self.currentDay = self.forecasts.remove(atIndex: 0)
                         self.updateMainUI()
                     }
                 }
@@ -126,7 +137,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func animateTable() {
-        tableView.reloadData() 
+        tableView.reloadData()
         tableView.clipsToBounds = false
         
         let cells = tableView.visibleCells

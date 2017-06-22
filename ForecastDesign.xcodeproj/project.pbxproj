@@ -18,7 +18,7 @@
 		5D36A7C11EDD95B100FA070B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D36A7BF1EDD95B100FA070B /* LaunchScreen.storyboard */; };
 		5D36A7CC1EDDA5E400FA070B /* WeatherByDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D36A7CB1EDDA5E400FA070B /* WeatherByDayCell.swift */; };
 		5D36A7CE1EDDA61A00FA070B /* ForecastPerDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D36A7CD1EDDA61A00FA070B /* ForecastPerDay.swift */; };
-		5D4A46191EDEE30A00DCA0B9 /* ForecastlDaysInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A46181EDEE30A00DCA0B9 /* ForecastlDaysInfo.swift */; };
+		5D4A46191EDEE30A00DCA0B9 /* ForecastDaysInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A46181EDEE30A00DCA0B9 /* ForecastDaysInfo.swift */; };
 		5D4A461B1EDEFA5100DCA0B9 /* ForecastPerHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */; };
 		5D4A461D1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A461C1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift */; };
 		5D4A461F1EDF02D700DCA0B9 /* ForecastHoursInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A461E1EDF02D700DCA0B9 /* ForecastHoursInfo.swift */; };
@@ -42,7 +42,7 @@
 		5D36A7C21EDD95B100FA070B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D36A7CB1EDDA5E400FA070B /* WeatherByDayCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherByDayCell.swift; sourceTree = "<group>"; };
 		5D36A7CD1EDDA61A00FA070B /* ForecastPerDay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastPerDay.swift; sourceTree = "<group>"; };
-		5D4A46181EDEE30A00DCA0B9 /* ForecastlDaysInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastlDaysInfo.swift; sourceTree = "<group>"; };
+		5D4A46181EDEE30A00DCA0B9 /* ForecastDaysInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastDaysInfo.swift; sourceTree = "<group>"; };
 		5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastPerHour.swift; sourceTree = "<group>"; };
 		5D4A461C1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherByHourCell.swift; sourceTree = "<group>"; };
 		5D4A461E1EDF02D700DCA0B9 /* ForecastHoursInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastHoursInfo.swift; sourceTree = "<group>"; };
@@ -107,10 +107,10 @@
 			isa = PBXGroup;
 			children = (
 				5D148C7B1EDDA789004CE9FB /* Constants.swift */,
-				5D36A7CD1EDDA61A00FA070B /* ForecastPerDay.swift */,
-				5D4A46181EDEE30A00DCA0B9 /* ForecastlDaysInfo.swift */,
 				5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */,
+				5D36A7CD1EDDA61A00FA070B /* ForecastPerDay.swift */,
 				5D4A461E1EDF02D700DCA0B9 /* ForecastHoursInfo.swift */,
+				5D4A46181EDEE30A00DCA0B9 /* ForecastDaysInfo.swift */,
 				5D148C791EDDA775004CE9FB /* CurrentWeather.swift */,
 				5D148C7D1EDDA7AB004CE9FB /* Location.swift */,
 			);
@@ -281,7 +281,7 @@
 				5D36A7CE1EDDA61A00FA070B /* ForecastPerDay.swift in Sources */,
 				5D4A461D1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift in Sources */,
 				5D4A461F1EDF02D700DCA0B9 /* ForecastHoursInfo.swift in Sources */,
-				5D4A46191EDEE30A00DCA0B9 /* ForecastlDaysInfo.swift in Sources */,
+				5D4A46191EDEE30A00DCA0B9 /* ForecastDaysInfo.swift in Sources */,
 				5D148C7A1EDDA775004CE9FB /* CurrentWeather.swift in Sources */,
 				5DDFBA331EDECC230095F3C8 /* DayDetailsVC.swift in Sources */,
 				5D36A7B91EDD95B100FA070B /* WeatherVC.swift in Sources */,
