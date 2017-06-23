@@ -46,14 +46,14 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         
         currentWeather = CurrentWeather()
         
-//        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-//        self.navigationController?.navigationBar.shadowImage = UIImage()
-//        self.navigationController?.navigationBar.isTranslucent = true
-//        self.navigationController?.view.backgroundColor = .clear
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.view.backgroundColor = .clear
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         if forecasts.isEmpty() {
             locationAuthStatus()    // get the user's location
@@ -96,7 +96,6 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func currentDayDetails() {
-        //print("Segue Left")
         performSegue(withIdentifier: "SegueToDayDetails", sender: currentDay)
     }
 
@@ -152,7 +151,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         
         for a in cells {
             let cell: UITableViewCell = a as UITableViewCell
-            UIView.animate(withDuration: 2.5, delay: 0.5 * Double(index), usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.7, delay: 0.1 * Double(index), usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                 cell.transform = CGAffineTransform(translationX: 0, y: 0);
             }, completion:{ finished in
                 self.tableView.clipsToBounds = true

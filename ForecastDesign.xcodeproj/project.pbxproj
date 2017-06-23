@@ -97,6 +97,7 @@
 				5D36A7C91EDDA57700FA070B /* View */,
 				5D36A7C81EDDA56F00FA070B /* Model */,
 				5D36A7B61EDD95B100FA070B /* AppDelegate.swift */,
+				5D36A7BA1EDD95B100FA070B /* Main.storyboard */,
 				5D36A7BF1EDD95B100FA070B /* LaunchScreen.storyboard */,
 				5D36A7C21EDD95B100FA070B /* Info.plist */,
 			);
@@ -120,7 +121,6 @@
 		5D36A7C91EDDA57700FA070B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				5D36A7BA1EDD95B100FA070B /* Main.storyboard */,
 				5D36A7CB1EDDA5E400FA070B /* WeatherByDayCell.swift */,
 				5D4A461C1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift */,
 			);
