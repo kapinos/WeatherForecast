@@ -52,7 +52,7 @@ class ForecastDaysInfo {
                         let forecast = ForecastPerDay(weatherDict: object)
                         forecastsTmp.append(forecast)
                     }
-                    self._forecasts.append(contentsOf: forecastsTmp[0...5]) // forecast for 5 days & except today
+                    self._forecasts.append(contentsOf: forecastsTmp[0...5]) // forecast for 5 days 
                 }
             }
             completed()

@@ -12,11 +12,15 @@ import Alamofire
 
 class CurrentWeather {
     private var _cityName: String!
-    private var _date: String! //
-    private var _weatherType: String! //
-    private var _weatherDescription: String!//
+    private var _date: String! 
+    private var _weatherType: String!
+    private var _weatherDescription: String!
     private var _weatherIcon: String!
-    private var _currentTemperature: Int!//
+    private var _currentTemperature: Int!
+    private var _dayOfWeek: String!
+    private var _dayOfMonth: String!
+    private var _month: String!
+    private var _time: String!
     
     var cityName: String {
         if _cityName == nil {
@@ -69,6 +73,33 @@ class CurrentWeather {
         return _date
     }
     
+    var dayOfWeek: String {
+        if _dayOfWeek == nil {
+            _dayOfWeek = ""
+        }
+        return _dayOfWeek
+    }
+    
+    var dayOfMonth: String {
+        if _dayOfMonth == nil {
+            _dayOfMonth = ""
+        }
+        return _dayOfMonth
+    }
+    
+    var month: String {
+        if _month == nil {
+            _month = ""
+        }
+        return _month
+    }
+    var time: String {
+        if _time == nil {
+            _time = ""
+        }
+        return _time
+    }
+    
     // get image for BG
     // contents weatherType + d/n
     func defineBGImage() -> String {
@@ -110,6 +141,14 @@ class CurrentWeather {
                         let kelvinToCelsius = Int(round(10 * kelvinToCelsiusPreDevision/10))
                         self._currentTemperature = kelvinToCelsius
                     }
+                }
+                if let date = dict["dt"] as? Double {
+                    let unixConvertedDate = Date(timeIntervalSince1970: date)
+                    
+                    self._dayOfWeek = unixConvertedDate.dayOfTheWeek()
+                    self._dayOfMonth = unixConvertedDate.dayOfTheMonth()
+                    self._month = unixConvertedDate.month()
+                    self._time = unixConvertedDate.time()
                 }
             }
             //print("city: \(self._cityName!); weather: \(self._weatherType!); temperature: \(self._currentTemperature!)")

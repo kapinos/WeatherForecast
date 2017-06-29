@@ -9,8 +9,18 @@
 import UIKit
 import Alamofire
 
-class ForecastPerHour {
-
+class ForecastPerHour: Sequence, IteratorProtocol {
+    private var count: Int = 0
+    
+    func next() -> Int? {
+        if count == 0 {
+            return nil
+        } else {
+            defer { count -= 1 }
+            return count
+        }
+    }
+    
     private var _dayOfWeek: String!
     private var _dayOfMonth: String!
     private var _month: String!
@@ -160,6 +170,14 @@ class ForecastPerHour {
         }
         // check for every forecast        
 //        print("date & time: \(self.dayOfWeek), \(self.dayOfMonth) \(self.month) \(self.time), weather: \(self.weatherType), temp: \(self.temperature), rain: \(self.rain), wind direction: \(self.windDirection)  speedWind: \(self.windSpeed)")
+    }
+    
+    // get image for BG
+    // contents weatherType + d/n
+    func defineBGImage() -> String {
+        var weatherBackgroundImage = _weatherType.lowercased()
+        weatherBackgroundImage += _weatherIcon.contains("d") ? "d" : "n" // check day or night
+        return weatherBackgroundImage
     }
 }
 

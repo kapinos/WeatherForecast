@@ -26,8 +26,10 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation!
     var currentWeather: CurrentWeather!
-    var currentDay: ForecastPerDay!
-    var forecasts = ForecastDaysInfo()
+    var forecastsDays = ForecastDaysInfo()
+    var forecastDaysForTableView = ForecastDaysInfo()
+    var forecastsHours = ForecastHoursInfo()
+    var timeBeingInBackground: Date!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +45,6 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         locationManager.startMonitoringSignificantLocationChanges()
         
         swipeToCurrentDayDetails.addTarget(self, action: #selector(self.currentDayDetails))
-        
         currentWeather = CurrentWeather()
         
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -55,11 +56,25 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if forecasts.isEmpty() {
+        if forecastsDays.isEmpty() {
             locationAuthStatus()    // get the user's location
+            
         } else {
             animateTable()
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(appRestoredFromBackground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)        
+         NotificationCenter.default.removeObserver(self)
     }
     
     //MARK: delegate & datasource
@@ -68,12 +83,13 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return forecasts.count()
+        return forecastDaysForTableView.count() // show table without current day
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherByDayCell", for: indexPath) as? WeatherByDayCell {
-            let forecast = forecasts.getForecast(byIndex: indexPath.row)
+            let forecast = forecastDaysForTableView.getForecast(byIndex: indexPath.row)
             cell.cofigureCell(forecast: forecast)
             return cell
         } else {
@@ -82,21 +98,28 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let day = forecasts.getForecast(byIndex: indexPath.row)
-        performSegue(withIdentifier: "SegueToDayDetails", sender: day)
+        let day = forecastsDays.getForecast(byIndex: indexPath.row)
+        
+        let hoursForSelectedDay = getForecastByHoursFor(dayMonth: day.dayOfMonth)
+        if !hoursForSelectedDay.isEmpty() {
+            performSegue(withIdentifier: "SegueToDayDetails", sender: hoursForSelectedDay)
+        }
     }
     
     //MARK: segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? DayDetailsVC {
-            if let selectedDay = sender as? ForecastPerDay {
-                destination.forecastSelectedDay = selectedDay
+            if let arrayForecastsByHours = sender as? ForecastHoursInfo {
+                destination.forecastHours = arrayForecastsByHours
             }
         }
     }
     
     func currentDayDetails() {
-        performSegue(withIdentifier: "SegueToDayDetails", sender: currentDay)
+        let hoursForSelectedDay = getForecastByHoursFor(dayMonth: currentWeather.dayOfMonth)
+        if !hoursForSelectedDay.isEmpty() {
+            performSegue(withIdentifier: "SegueToDayDetails", sender: hoursForSelectedDay)
+        }
     }
 
     //MARK: inner methods
@@ -108,10 +131,11 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         currentIcon.image = UIImage(named: currentWeather.weatherIcon)
         currentBGImage.image = UIImage(named: currentWeather.defineBGImage())
         
-       // currentBGImage.image = UIImage(named: "thunderstormd") // check image
-       // print("image: \(currentWeather.defineBGImage())") // checkValue image
         self.tableView.alpha = 1
         animateTable()
+        
+        // currentBGImage.image = UIImage(named: "thunderstormd") // check image
+        // print("image: \(currentWeather.defineBGImage())") // checkValue image
     }
     
     func locationAuthStatus() {
@@ -123,9 +147,12 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
                 LocationService.sharedInstance.longitude = currentLocation.coordinate.longitude
                 
                 currentWeather.downloadWeatherDetails {
-                    self.forecasts.downloadForecastData {
-                        self.currentDay = self.forecasts.remove(atIndex: 0)
-                        self.updateMainUI()
+                    self.forecastsDays.downloadForecastData {
+                        self.forecastsHours.downloadForecastData {
+                           self.forecastDaysForTableView = self.forecastsDays
+                            _ = self.forecastDaysForTableView.remove(atIndex: 0)
+                            self.updateMainUI()
+                        }
                     }
                 }
             }
@@ -133,6 +160,18 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
             locationManager.requestWhenInUseAuthorization()
             locationAuthStatus()
         }
+    }
+    
+    func getForecastByHoursFor(dayMonth: String) -> ForecastHoursInfo {
+        
+        let arrayForecastsHours = ForecastHoursInfo()
+        for i in 0..<forecastsHours.getCount() {
+            let forecast = forecastsHours.getForecast(byIndex: i)
+            if forecast.dayOfMonth == dayMonth {
+                arrayForecastsHours.append(forecast: forecast)
+            }
+        }
+        return arrayForecastsHours
     }
     
     func animateTable() {
@@ -157,6 +196,42 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
                 self.tableView.clipsToBounds = true
             })
             index += 1
+        }
+    }
+    
+    // MARK: lifecycle APP
+    
+    func appMovedToBackground() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .long
+        
+        let date = Date()
+        let currentDate = dateFormatter.string(from: date)
+        print("appWillResignActive WeatherVC: \(currentDate)")
+        
+        timeBeingInBackground = date
+    }
+    
+    func appRestoredFromBackground() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .long
+        let date = Date()
+        let currentDate = dateFormatter.string(from: date)
+        print("appWillEnterForeground WeatherVC: \(currentDate)")
+        
+        let period = date.timeIntervalSince(timeBeingInBackground)
+        print("period: \(period)")
+        
+        // update every 10 minutes
+        if Int(period) > UPDATE_APP_PERIOD_SECONDS {
+            print("update the data")
+            
+            if forecastsDays.isEmpty() {
+                locationAuthStatus()    // get the user's location
+                
+            } else {
+                animateTable()
+            }
         }
     }
 }

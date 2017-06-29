@@ -12,7 +12,7 @@ class ForecastHoursInfo {
     
     private var _forecasts = [ForecastPerHour]()
     
-    func count() -> Int {
+    func getCount() -> Int {
         return _forecasts.count
     }
     
@@ -28,11 +28,16 @@ class ForecastHoursInfo {
         return _forecasts[byIndex]
     }
     
+    func getForecastForMiddleOfTheDay() -> ForecastPerHour {
+        let indexMiddle = Int(round(Double(_forecasts.count/2)))
+        return _forecasts[indexMiddle]
+    }
+    
     func isEmpty() -> Bool {
         return (_forecasts.count == 0)
     }
     
-    func downloadForecastData(dayMonth: String, completed: @escaping DownloadComplete)  {
+    func downloadForecastData(completed: @escaping DownloadComplete)  {
         let forecastURL = URL(string: FORECAST_EVERY_THREE_HOURS)
         Alamofire.request(forecastURL!).responseJSON { response in
             
@@ -43,9 +48,7 @@ class ForecastHoursInfo {
                     for object in list {
                     //    print(object) // get 5 days every 3 hour forecast
                         let forecast = ForecastPerHour(weatherDict: object)
-                        if forecast.dayOfMonth == dayMonth {
-                            self._forecasts.append(forecast)
-                        }
+                        self._forecasts.append(forecast)
                     }
                 }
             }
