@@ -24,7 +24,7 @@ class WeatherByHourCell: UITableViewCell {
         weatherTypeImage.image = UIImage(named: forecast.weatherIcon)
         weatherTypeLabel.text = "\(forecast.weatherDescription)"
         temperatureLabel.text = "\(forecast.temperature) °C"
-        rainPercentageLabel.text = "\(forecast.rain) %"
+        rainPercentageLabel.text = "\(forecast.precipitationsPercent) %"
         windDegreeImage.image = UIImage(named: forecast.windDirection)
         windSpeedLabel.text = "\(forecast.windSpeed) h/s"
         

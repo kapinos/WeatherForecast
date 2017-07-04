@@ -30,6 +30,8 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     var forecastDaysForTableView = ForecastDaysInfo()
     var forecastsHours = ForecastHoursInfo()
     var timeBeingInBackground: Date!
+    var detailsVC: DayDetailsVC?
+    var downloadAgain = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +59,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         super.viewWillAppear(animated)
         
         if forecastsDays.isEmpty() {
-            locationAuthStatus()    // get the user's location
+            downloadForecastByUserLocation(){}    // get the user's location
             
         } else {
             animateTable()
@@ -74,7 +76,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)        
-         NotificationCenter.default.removeObserver(self)
+        //NotificationCenter.default.removeObserver(self)
     }
     
     //MARK: delegate & datasource
@@ -97,10 +99,12 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         }
     }
 
+    var dayMonthSelected = ""
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let day = forecastsDays.getForecast(byIndex: indexPath.row)
         
-        let hoursForSelectedDay = getForecastByHoursFor(dayMonth: day.dayOfMonth)
+        dayMonthSelected = day.dayOfMonth
+        let hoursForSelectedDay = getForecastByHoursFor(dayMonth: dayMonthSelected)
         if !hoursForSelectedDay.isEmpty() {
             performSegue(withIdentifier: "SegueToDayDetails", sender: hoursForSelectedDay)
         }
@@ -108,9 +112,10 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     
     //MARK: segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? DayDetailsVC {
+        if let dayDetailsVC = segue.destination as? DayDetailsVC {
+            self.detailsVC = dayDetailsVC
             if let arrayForecastsByHours = sender as? ForecastHoursInfo {
-                destination.forecastHours = arrayForecastsByHours
+                dayDetailsVC.forecastHours = arrayForecastsByHours
             }
         }
     }
@@ -138,7 +143,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         // print("image: \(currentWeather.defineBGImage())") // checkValue image
     }
     
-    func locationAuthStatus() {
+    func downloadForecastByUserLocation(completed: @escaping () -> ()) {
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             if locationManager.location != nil {
                 currentLocation = locationManager.location
@@ -146,19 +151,34 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
                 LocationService.sharedInstance.latitude = currentLocation.coordinate.latitude
                 LocationService.sharedInstance.longitude = currentLocation.coordinate.longitude
                 
+                //**
+                print("lat = \(LocationService.sharedInstance.latitude); lon = \(LocationService.sharedInstance.longitude)")
+                //**
+                
+                
                 currentWeather.downloadWeatherDetails {
                     self.forecastsDays.downloadForecastData {
                         self.forecastsHours.downloadForecastData {
                            self.forecastDaysForTableView = self.forecastsDays
                             _ = self.forecastDaysForTableView.remove(atIndex: 0)
                             self.updateMainUI()
+                            completed()
                         }
                     }
                 }
             }
         } else {
+            downloadAgain = true
             locationManager.requestWhenInUseAuthorization()
-            locationAuthStatus()
+        }
+    }
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if !downloadAgain {
+            return
+        }
+        if status == .authorizedAlways  ||
+            status == .authorizedWhenInUse {
+            downloadForecastByUserLocation(){}
         }
     }
     
@@ -202,6 +222,7 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     // MARK: lifecycle APP
     
     func appMovedToBackground() {
+        // **only for test-------
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .long
         
@@ -209,28 +230,41 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         let currentDate = dateFormatter.string(from: date)
         print("appWillResignActive WeatherVC: \(currentDate)")
         
+        if detailsVC != nil {
+            if let hours = detailsVC?.forecastHours {
+                for i in 0..<hours.getCount() {
+                    let tmp = hours.getForecast(byIndex: i).temperature
+                    hours.getForecast(byIndex: i).temperature = -tmp
+                    print("\(hours.getForecast(byIndex: i).temperature)")
+                }
+            }
+        }
+        // **only for test---------
+        
         timeBeingInBackground = date
     }
     
     func appRestoredFromBackground() {
+        // **only for test---------
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .long
         let date = Date()
         let currentDate = dateFormatter.string(from: date)
         print("appWillEnterForeground WeatherVC: \(currentDate)")
+        // **only for test---------
         
         let period = date.timeIntervalSince(timeBeingInBackground)
-        print("period: \(period)")
+        print("period: \(period)")       
         
         // update every 10 minutes
         if Int(period) > UPDATE_APP_PERIOD_SECONDS {
-            print("update the data")
+            print("update the data WeatherVC")
             
-            if forecastsDays.isEmpty() {
-                locationAuthStatus()    // get the user's location
-                
-            } else {
-                animateTable()
+            downloadForecastByUserLocation {
+                if self.dayMonthSelected != "" {
+                    let hoursForSelectedDay = self.getForecastByHoursFor(dayMonth: self.dayMonthSelected)
+                    self.detailsVC?.updateForecast(forecast: hoursForSelectedDay)
+                }
             }
         }
     }

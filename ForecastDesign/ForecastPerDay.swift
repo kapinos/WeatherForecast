@@ -9,57 +9,9 @@
 import UIKit
 import Alamofire
 
-class ForecastPerDay {
-    private var _dayOfWeek:String!
-    private var _dayOfMonth:String!
-    private var _month: String!
-    private var _weatherType: String!
-    private var _weatherDescription: String!
-    private var _weatherIcon: String!
+class ForecastPerDay: Forecast {
     private var _highTemperature: Int!
     private var _lowTemperature: Int!
-    
-    var dayOfWeek: String {
-        if _dayOfWeek == nil {
-            _dayOfWeek = ""
-        }
-        return _dayOfWeek
-    }
-    
-    var dayOfMonth: String {
-        if _dayOfMonth == nil {
-            _dayOfMonth = ""
-        }
-        return _dayOfMonth
-    }
-    
-    var month: String {
-        if _month == nil {
-            _month = ""
-        }
-        return _month
-    }
-    
-    var weatherType: String {
-        if _weatherType == nil {
-            _weatherType = ""
-        }
-        return _weatherType
-    }
-    
-    var weatherDescription: String {
-        if _weatherDescription == nil {
-            _weatherDescription = ""
-        }
-        return _weatherDescription
-    }
-    
-    var weatherIcon: String {
-        if _weatherIcon == nil {
-            _weatherIcon = ""
-        }
-        return _weatherIcon
-    }
     
     var highTemperature: Int {
         if _highTemperature == nil {
@@ -75,16 +27,9 @@ class ForecastPerDay {
         return _lowTemperature
     }
     
-    // get image for BG
-    // contents weatherType + d/n
-    func defineBGImage() -> String {
-        var weatherBackgroundImage = _weatherType.lowercased()
-        weatherBackgroundImage += _weatherIcon.contains("d") ? "d" : "n" // check day or night
-        return weatherBackgroundImage
-    }
+    override init(weatherDict: Dictionary<String, Any>) {
+        super.init(weatherDict: weatherDict)
     
-    init(weatherDict: Dictionary<String, Any>) {
-        
         if let temp = weatherDict["temp"] as? Dictionary<String, Any> {
             if let min = temp["min"] as? Double {
                 let kelvinToCelsiumPreDivision = min - 273.15
@@ -101,23 +46,23 @@ class ForecastPerDay {
         
         if let weather = weatherDict["weather"] as? [Dictionary<String, Any>] {
             if let main = weather[0]["main"] as? String {
-                self._weatherType = main
+                weatherType = main
             }
             
             if let description = weather[0]["description"] as? String {
-                self._weatherDescription = description
+                weatherDescription = description
             }
             
             if let icon = weather[0]["icon"] as? String {
-                self._weatherIcon = icon
+                weatherIcon = icon
             }            
         }
         
         if let date = weatherDict["dt"] as? Double {            
             let unixConvertedDate = Date(timeIntervalSince1970: date)
-            self._dayOfWeek = unixConvertedDate.dayOfTheWeek()
-            self._dayOfMonth = unixConvertedDate.dayOfTheMonth()
-            self._month = unixConvertedDate.month()
+            dayOfWeek = unixConvertedDate.dayOfTheWeek()
+            dayOfMonth = unixConvertedDate.dayOfTheMonth()
+            month = unixConvertedDate.month()
         }
     }
 }

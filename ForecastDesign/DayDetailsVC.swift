@@ -20,7 +20,6 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     // MARK: variables
     private var _forecastHours = ForecastHoursInfo()
     var timeBeingInBackground: Date!
-    var selectedDayOfMonth = ""
     
     var forecastHours: ForecastHoursInfo {
         get {
@@ -34,13 +33,13 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationController?.navigationBar.tintColor = UIColor.clear
-
+        navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.topItem?.title = "" // left only arrow
+        
         tableView.delegate = self
         tableView.dataSource = self
                 
         let selectedDay = _forecastHours.getForecastForMiddleOfTheDay()
-        selectedDayOfMonth = selectedDay.dayOfMonth
         
         currentBGImage.image = UIImage(named: selectedDay.defineBGImage())
         dayWeekLabel.text = selectedDay.dayOfWeek
@@ -50,15 +49,10 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(appRestoredFromBackground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: delegate & datasource
@@ -80,53 +74,15 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         }
     }
     
-    // MARK: lifecycle APP
-    
-    func appMovedToBackground() {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .long
-        
-        let date = Date()
-        let currentDate = dateFormatter.string(from: date)
-        print("appWillResignActive DetailsVC: \(currentDate)")
-        
-        timeBeingInBackground = date
-    }
-    
-    func appRestoredFromBackground() {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .long
-        let date = Date()
-        let currentDate = dateFormatter.string(from: date)
-        print("appWillEnterForeground DetailsVC: \(currentDate)")
-        
-        let period = date.timeIntervalSince(timeBeingInBackground)
-        print("period: \(period)")
-        
-        // update every 10 minutes
-        if Int(period) > UPDATE_APP_PERIOD_SECONDS {
-            print("update the data")
-            
-            _forecastHours = getForecastByHoursFor(dayMonth: selectedDayOfMonth)
-            tableView.reloadData()
+    func updateForecast(forecast: ForecastHoursInfo) {
+        print("I've got the data")
+        _forecastHours = forecast
+         // **only for test-----
+        for i in 0..<forecast.getCount() {
+            let forecast = forecast.getForecast(byIndex: i)
+            print(forecast.temperature)
         }
-    }
-    
-    
-    func getForecastByHoursFor(dayMonth: String) -> ForecastHoursInfo {
-        
-        let arrayForecastsHours = ForecastHoursInfo()
-        var forecastsHours = ForecastHoursInfo()
-        
-        forecastsHours.downloadForecastData{}
-            
-            for i in 0..<forecastsHours.getCount() {
-                let forecast = forecastsHours.getForecast(byIndex: i)
-                if forecast.dayOfMonth == dayMonth {
-                    arrayForecastsHours.append(forecast: forecast)
-                }
-            }
-       
-        return arrayForecastsHours
+        // **only for test-----
+        tableView.reloadData()
     }
 }

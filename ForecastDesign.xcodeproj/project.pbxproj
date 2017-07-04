@@ -22,6 +22,7 @@
 		5D4A461B1EDEFA5100DCA0B9 /* ForecastPerHour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */; };
 		5D4A461D1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A461C1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift */; };
 		5D4A461F1EDF02D700DCA0B9 /* ForecastHoursInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4A461E1EDF02D700DCA0B9 /* ForecastHoursInfo.swift */; };
+		5D83AA141F0A6EB900967B2E /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D83AA131F0A6EB900967B2E /* Forecast.swift */; };
 		5DDFBA331EDECC230095F3C8 /* DayDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DDFBA321EDECC230095F3C8 /* DayDetailsVC.swift */; };
 		63DD5E5342014B1C9B804ECD /* Pods_ForecastDesign.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F34D65176BE6B35D8ACDFC3 /* Pods_ForecastDesign.framework */; };
 /* End PBXBuildFile section */
@@ -46,6 +47,7 @@
 		5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastPerHour.swift; sourceTree = "<group>"; };
 		5D4A461C1EDEFF2E00DCA0B9 /* WeatherByHourCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherByHourCell.swift; sourceTree = "<group>"; };
 		5D4A461E1EDF02D700DCA0B9 /* ForecastHoursInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForecastHoursInfo.swift; sourceTree = "<group>"; };
+		5D83AA131F0A6EB900967B2E /* Forecast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Forecast.swift; sourceTree = "<group>"; };
 		5DDFBA321EDECC230095F3C8 /* DayDetailsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayDetailsVC.swift; sourceTree = "<group>"; };
 		A47906B2CB610419C8F5E0C2 /* Pods-ForecastDesign.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ForecastDesign.release.xcconfig"; path = "Pods/Target Support Files/Pods-ForecastDesign/Pods-ForecastDesign.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				5D148C7B1EDDA789004CE9FB /* Constants.swift */,
+				5D83AA131F0A6EB900967B2E /* Forecast.swift */,
 				5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */,
 				5D36A7CD1EDDA61A00FA070B /* ForecastPerDay.swift */,
 				5D4A461E1EDF02D700DCA0B9 /* ForecastHoursInfo.swift */,
@@ -285,6 +288,7 @@
 				5D148C7A1EDDA775004CE9FB /* CurrentWeather.swift in Sources */,
 				5DDFBA331EDECC230095F3C8 /* DayDetailsVC.swift in Sources */,
 				5D36A7B91EDD95B100FA070B /* WeatherVC.swift in Sources */,
+				5D83AA141F0A6EB900967B2E /* Forecast.swift in Sources */,
 				5D36A7B71EDD95B100FA070B /* AppDelegate.swift in Sources */,
 				5D4A461B1EDEFA5100DCA0B9 /* ForecastPerHour.swift in Sources */,
 				5D36A7CC1EDDA5E400FA070B /* WeatherByDayCell.swift in Sources */,

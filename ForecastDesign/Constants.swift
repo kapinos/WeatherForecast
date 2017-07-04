@@ -16,7 +16,7 @@ let LONGITUDE = "&lon="
 let APP_ID = "&appid="
 let API_KEY = "9b6febb338be90f2d99c78265226ec8f"
 
-let UPDATE_APP_PERIOD_SECONDS = 600
+let UPDATE_APP_PERIOD_SECONDS = 2
 
 typealias DownloadComplete = () -> ()
 

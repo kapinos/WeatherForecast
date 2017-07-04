@@ -45,6 +45,7 @@ class ForecastHoursInfo {
             
             if let dict = result.value as? Dictionary<String, Any> {
                 if let list = dict["list"] as? [Dictionary<String, Any>] {
+                    self._forecasts.removeAll()
                     for object in list {
                     //    print(object) // get 5 days every 3 hour forecast
                         let forecast = ForecastPerHour(weatherDict: object)

@@ -10,44 +10,16 @@
 import Foundation
 import Alamofire
 
-class CurrentWeather {
+class CurrentWeather: Forecast {
     private var _cityName: String!
-    private var _date: String! 
-    private var _weatherType: String!
-    private var _weatherDescription: String!
-    private var _weatherIcon: String!
+    private var _date: String!
     private var _currentTemperature: Int!
-    private var _dayOfWeek: String!
-    private var _dayOfMonth: String!
-    private var _month: String!
-    private var _time: String!
     
     var cityName: String {
         if _cityName == nil {
             _cityName = ""
         }
         return _cityName
-    }
-    
-    var weatherType: String {
-        if _weatherType == nil {
-            _weatherType = ""
-        }
-        return _weatherType
-    }
-    
-    var weatherDescription: String {
-        if _weatherDescription == nil {
-            _weatherDescription = ""
-        }
-        return _weatherDescription
-    }
-    
-    var weatherIcon: String {
-        if _weatherIcon == nil {
-            _weatherIcon = ""
-        }
-        return _weatherIcon
     }
     
     var currentTemperature: Int {
@@ -71,42 +43,6 @@ class CurrentWeather {
         self._date = "\(currentDate)"
         
         return _date
-    }
-    
-    var dayOfWeek: String {
-        if _dayOfWeek == nil {
-            _dayOfWeek = ""
-        }
-        return _dayOfWeek
-    }
-    
-    var dayOfMonth: String {
-        if _dayOfMonth == nil {
-            _dayOfMonth = ""
-        }
-        return _dayOfMonth
-    }
-    
-    var month: String {
-        if _month == nil {
-            _month = ""
-        }
-        return _month
-    }
-    var time: String {
-        if _time == nil {
-            _time = ""
-        }
-        return _time
-    }
-    
-    // get image for BG
-    // contents weatherType + d/n
-    func defineBGImage() -> String {
-        var weatherBackgroundImage = _weatherType.lowercased()
-        weatherBackgroundImage += _weatherIcon.contains("d") ? "d" : "n" // check day or night
-        
-        return weatherBackgroundImage
     }
     
     func downloadWeatherDetails(comleted: @escaping DownloadComplete) {
@@ -148,7 +84,6 @@ class CurrentWeather {
                     self._dayOfWeek = unixConvertedDate.dayOfTheWeek()
                     self._dayOfMonth = unixConvertedDate.dayOfTheMonth()
                     self._month = unixConvertedDate.month()
-                    self._time = unixConvertedDate.time()
                 }
             }
             //print("city: \(self._cityName!); weather: \(self._weatherType!); temperature: \(self._currentTemperature!)")
