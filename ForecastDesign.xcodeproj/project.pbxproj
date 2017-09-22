@@ -109,7 +109,6 @@
 		5D36A7C81EDDA56F00FA070B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5D148C7B1EDDA789004CE9FB /* Constants.swift */,
 				5D83AA131F0A6EB900967B2E /* Forecast.swift */,
 				5D4A461A1EDEFA5100DCA0B9 /* ForecastPerHour.swift */,
 				5D36A7CD1EDDA61A00FA070B /* ForecastPerDay.swift */,
@@ -117,6 +116,7 @@
 				5D4A46181EDEE30A00DCA0B9 /* ForecastDaysInfo.swift */,
 				5D148C791EDDA775004CE9FB /* CurrentWeather.swift */,
 				5D148C7D1EDDA7AB004CE9FB /* Location.swift */,
+				5D148C7B1EDDA789004CE9FB /* Constants.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -235,9 +235,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ForecastDesign/Pods-ForecastDesign-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -250,13 +253,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ForecastDesign-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		751E9A468D3ABD56A7074E91 /* [CP] Copy Pods Resources */ = {
@@ -417,10 +423,12 @@
 			baseConfigurationReference = 0551B669152374A3D9DD9EA1 /* Pods-ForecastDesign.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = G9UHR5NE37;
 				INFOPLIST_FILE = ForecastDesign/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ankis.ForecastDesign;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ankis.Forecast;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -431,10 +439,12 @@
 			baseConfigurationReference = A47906B2CB610419C8F5E0C2 /* Pods-ForecastDesign.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = G9UHR5NE37;
 				INFOPLIST_FILE = ForecastDesign/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ankis.ForecastDesign;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ankis.Forecast;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

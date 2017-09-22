@@ -14,9 +14,9 @@ class WeatherByHourCell: UITableViewCell {
     @IBOutlet weak var weatherTypeImage: UIImageView!
     @IBOutlet weak var weatherTypeLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
-    @IBOutlet weak var rainPercentageLabel: UILabel!
     @IBOutlet weak var windDegreeImage: UIImageView! 
     @IBOutlet weak var windSpeedLabel: UILabel!
+    @IBOutlet weak var rainIntensityImage: UIImageView!
     
     
     func configureCell(forecast: ForecastPerHour) {
@@ -24,7 +24,8 @@ class WeatherByHourCell: UITableViewCell {
         weatherTypeImage.image = UIImage(named: forecast.weatherIcon)
         weatherTypeLabel.text = "\(forecast.weatherDescription)"
         temperatureLabel.text = "\(forecast.temperature) °C"
-        rainPercentageLabel.text = "\(forecast.precipitationsPercent) %"
+        let rainImageName = (forecast.rainVolume == "") ? "noRain" : forecast.rainVolume
+        rainIntensityImage.image = UIImage(named: rainImageName)
         windDegreeImage.image = UIImage(named: forecast.windDirection)
         windSpeedLabel.text = "\(forecast.windSpeed) h/s"
         

@@ -24,6 +24,5 @@ class WeatherByDayCell: UITableViewCell {
         dayOfWeekLabel.text = forecast.dayOfWeek
         
         self.backgroundColor = UIColor(white: 1, alpha: 0.3)
-        //self.layer.cornerRadius = 15
     }
 }

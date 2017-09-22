@@ -39,6 +39,10 @@ class ForecastDaysInfo {
     func downloadForecastData(completed: @escaping DownloadComplete)  {
         let forecastURL = URL(string: FORECAST_TEN_DAYS_URL)
         Alamofire.request(forecastURL!).responseJSON { response in
+            if response.error != nil {
+                print("ERROR: \(String(describing: response.error?.localizedDescription))")
+                return
+            }
             
             let result = response.result
             

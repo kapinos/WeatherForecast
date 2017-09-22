@@ -27,7 +27,6 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     var currentLocation: CLLocation!
     var currentWeather: CurrentWeather!
     var forecastsDays = ForecastDaysInfo()
-    var forecastDaysForTableView = ForecastDaysInfo()
     var forecastsHours = ForecastHoursInfo()
     var timeBeingInBackground: Date!
     var detailsVC: DayDetailsVC?
@@ -53,6 +52,10 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.view.backgroundColor = .clear
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(appRestoredFromBackground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,7 +63,6 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
         
         if forecastsDays.isEmpty() {
             downloadForecastByUserLocation(){}    // get the user's location
-            
         } else {
             animateTable()
         }
@@ -68,30 +70,25 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationWillResignActive, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(appRestoredFromBackground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)        
-        //NotificationCenter.default.removeObserver(self)
+        super.viewWillDisappear(animated)
     }
     
-    //MARK: delegate & datasource
+    //MARK: UITableViewDelegate
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return forecastDaysForTableView.count() // show table without current day
+        return forecastsDays.count() - 1 // get forecastsDays count without current day
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherByDayCell", for: indexPath) as? WeatherByDayCell {
-            let forecast = forecastDaysForTableView.getForecast(byIndex: indexPath.row)
+            let forecast = forecastsDays.getForecast(byIndex: indexPath.row+1)
             cell.cofigureCell(forecast: forecast)
             return cell
         } else {
@@ -101,13 +98,31 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
 
     var dayMonthSelected = ""
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let day = forecastsDays.getForecast(byIndex: indexPath.row)
+        let day = forecastsDays.getForecast(byIndex: indexPath.row+1)
         
         dayMonthSelected = day.dayOfMonth
         let hoursForSelectedDay = getForecastByHoursFor(dayMonth: dayMonthSelected)
         if !hoursForSelectedDay.isEmpty() {
             performSegue(withIdentifier: "SegueToDayDetails", sender: hoursForSelectedDay)
         }
+    }
+    
+    //MARK: CLLocationManagerDelegate
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        //print("downloadAgain: \(downloadAgain); status: \(status.rawValue)")
+        if !downloadAgain {
+            return
+        }
+        if status == .authorizedAlways  ||
+            status == .authorizedWhenInUse {
+            downloadForecastByUserLocation(){}
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        manager.stopUpdatingLocation()
+        downloadForecastByUserLocation() {}
+        //print("didUpdateLocation; newLocation: \(manager.location)")
     }
     
     //MARK: segue
@@ -144,49 +159,39 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     func downloadForecastByUserLocation(completed: @escaping () -> ()) {
-        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-            if locationManager.location != nil {
-                currentLocation = locationManager.location
-                
-                LocationService.sharedInstance.latitude = currentLocation.coordinate.latitude
-                LocationService.sharedInstance.longitude = currentLocation.coordinate.longitude
-                
-                //**
-                print("lat = \(LocationService.sharedInstance.latitude); lon = \(LocationService.sharedInstance.longitude)")
-                //**
-                
-                
-                currentWeather.downloadWeatherDetails {
-                    self.forecastsDays.downloadForecastData {
-                        self.forecastsHours.downloadForecastData {
-                           self.forecastDaysForTableView = self.forecastsDays
-                            _ = self.forecastDaysForTableView.remove(atIndex: 0)
-                            self.updateMainUI()
-                            completed()
-                        }
-                    }
-                }
-            }
-        } else {
+        //print("Status: \(CLLocationManager.authorizationStatus().rawValue)")
+        if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
             downloadAgain = true
             locationManager.requestWhenInUseAuthorization()
-        }
-    }
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if !downloadAgain {
             return
         }
-        if status == .authorizedAlways  ||
-            status == .authorizedWhenInUse {
-            downloadForecastByUserLocation(){}
+        
+        downloadAgain = false
+        //print("location: \(locationManager.location)")
+        if locationManager.location == nil {
+            locationManager.startUpdatingLocation()
+            return
+        }
+        
+        currentLocation = locationManager.location
+        
+        LocationService.sharedInstance.latitude = currentLocation.coordinate.latitude
+        LocationService.sharedInstance.longitude = currentLocation.coordinate.longitude
+        
+        currentWeather.downloadWeatherDetails {
+            self.forecastsDays.downloadForecastData {
+                self.forecastsHours.downloadForecastData {
+                    self.updateMainUI()
+                    completed()
+                }
+            }
         }
     }
     
     func getForecastByHoursFor(dayMonth: String) -> ForecastHoursInfo {
         
         let arrayForecastsHours = ForecastHoursInfo()
-        for i in 0..<forecastsHours.getCount() {
-            let forecast = forecastsHours.getForecast(byIndex: i)
+        for forecast in forecastsHours {
             if forecast.dayOfMonth == dayMonth {
                 arrayForecastsHours.append(forecast: forecast)
             }
@@ -220,47 +225,21 @@ class WeatherVC: UIViewController, UITableViewDataSource, UITableViewDelegate, C
     }
     
     // MARK: lifecycle APP
-    
     func appMovedToBackground() {
-        // **only for test-------
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .long
-        
         let date = Date()
-        let currentDate = dateFormatter.string(from: date)
-        print("appWillResignActive WeatherVC: \(currentDate)")
-        
-        if detailsVC != nil {
-            if let hours = detailsVC?.forecastHours {
-                for i in 0..<hours.getCount() {
-                    let tmp = hours.getForecast(byIndex: i).temperature
-                    hours.getForecast(byIndex: i).temperature = -tmp
-                    print("\(hours.getForecast(byIndex: i).temperature)")
-                }
-            }
-        }
-        // **only for test---------
-        
         timeBeingInBackground = date
     }
     
     func appRestoredFromBackground() {
-        // **only for test---------
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .long
         let date = Date()
-        let currentDate = dateFormatter.string(from: date)
-        print("appWillEnterForeground WeatherVC: \(currentDate)")
-        // **only for test---------
-        
         let period = date.timeIntervalSince(timeBeingInBackground)
         print("period: \(period)")       
         
         // update every 10 minutes
-        if Int(period) > UPDATE_APP_PERIOD_SECONDS {
+        if Int(period) >= UPDATE_APP_PERIOD_SECONDS {
             print("update the data WeatherVC")
             
-            downloadForecastByUserLocation {
+            self.downloadForecastByUserLocation {
                 if self.dayMonthSelected != "" {
                     let hoursForSelectedDay = self.getForecastByHoursFor(dayMonth: self.dayMonthSelected)
                     self.detailsVC?.updateForecast(forecast: hoursForSelectedDay)

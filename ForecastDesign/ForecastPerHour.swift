@@ -13,7 +13,7 @@ class ForecastPerHour: Forecast {
 
     private var _time:String!
     private var _temperature: Int!
-    private var _precipitationsPercent: Int!
+    private var _rainVolume: String!
     private var _windSpeed: Double!
     private var _windDirection: String!
     private var _humidity: Int!
@@ -25,30 +25,30 @@ class ForecastPerHour: Forecast {
         return _time
     }
     
-    var temperature: Int {
-        get {
-            if _temperature == nil {
-                _temperature = 0
-            }
-            return _temperature
-        }
-        set {
-            _temperature = newValue
-        }
-    }
-    
 //    var temperature: Int {
-//        if _temperature == nil {
-//            _temperature = 0
+//        get {
+//            if _temperature == nil {
+//                _temperature = 0
+//            }
+//            return _temperature
 //        }
-//        return _temperature
+//        set {
+//            _temperature = newValue
+//        }
 //    }
     
-    var precipitationsPercent: Int {
-        if _precipitationsPercent == nil {
-            _precipitationsPercent = 0
+    var temperature: Int {
+        if _temperature == nil {
+            _temperature = 0
         }
-        return _precipitationsPercent
+        return _temperature
+    }
+    
+    var rainVolume: String {
+        if _rainVolume == nil {
+            _rainVolume = ""
+        }
+        return _rainVolume
     }
     
     var windSpeed: Double {
@@ -103,7 +103,10 @@ class ForecastPerHour: Forecast {
         
         if let rain = weatherDict["rain"] as? Dictionary<String, Any> {
             if let precipitations = rain["3h"] as? Double {
-                self._precipitationsPercent = Int(round(100 * precipitations))
+                let volume = getTheRainIntensityByVolume(volume: Double(round(precipitations * 100))/100)
+                self._rainVolume = volume.rawValue
+            } else {
+                self._rainVolume = RainIntensity.Default.rawValue
             }
         }
         

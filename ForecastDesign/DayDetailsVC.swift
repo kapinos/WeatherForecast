@@ -61,12 +61,12 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return _forecastHours.getCount()
+        return _forecastHours.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherByHourCell", for: indexPath) as? WeatherByHourCell {
-            let forecast = _forecastHours.getForecast(byIndex: indexPath.row)
+            let forecast = _forecastHours[indexPath.row]
             cell.configureCell(forecast: forecast)
             return cell
         } else {
@@ -77,12 +77,7 @@ class DayDetailsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     func updateForecast(forecast: ForecastHoursInfo) {
         print("I've got the data")
         _forecastHours = forecast
-         // **only for test-----
-        for i in 0..<forecast.getCount() {
-            let forecast = forecast.getForecast(byIndex: i)
-            print(forecast.temperature)
-        }
-        // **only for test-----
+        
         tableView.reloadData()
     }
 }

@@ -49,6 +49,11 @@ class CurrentWeather: Forecast {
         // Alamofire
         let currentWeatherUrl = URL(string: CURRENT_WEATHER_URL)
         Alamofire.request(currentWeatherUrl!).responseJSON { response in
+            if response.error != nil {
+                print("ERROR: \(String(describing: response.error?.localizedDescription))")
+                return
+            }
+            
             let result = response.result
             
             if let dict = result.value as? Dictionary<String, Any> {
